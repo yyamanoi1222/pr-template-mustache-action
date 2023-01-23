@@ -1,0 +1,14 @@
+name: "PR Template Mustache action"
+description: "template engine into the PR Template"
+
+inputs:
+  variables:
+    description: "custom variables"
+    required: false
+  token:
+    description: "GITHUB_TOKEN"
+    required: true
+
+runs:
+  using: "node16"
+  main: "dist/index.js"
