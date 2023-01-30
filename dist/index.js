@@ -8222,11 +8222,12 @@ var run = async () => {
   const githubToken = core.getInput("token");
   const client = github.getOctokit(githubToken).rest;
   const { number: pull_number } = context.payload.pull_request;
-  const pr = await client.pulls.get({
+  const { data: pr } = await client.pulls.get({
     ...context.repo,
     pull_number
   });
-  const output = (void 0)(pr.data.body, { ...process.env });
+  console.log(pr);
+  const output = (void 0)(pr.body, { ...process.env });
   client.pulls.update({
     ...context.repo,
     pull_number,

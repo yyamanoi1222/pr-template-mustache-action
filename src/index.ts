@@ -9,12 +9,14 @@ const run = async () => {
 
   const { number: pull_number } = context.payload.pull_request;
 
-  const pr = await client.pulls.get({
+  const { data: pr } = await client.pulls.get({
     ...context.repo,
     pull_number,
   });
 
-  const output = Mustache.render(pr.data.body, { ...process.env });
+  console.log(pr)
+
+  const output = Mustache.render(pr.body, { ...process.env });
 
   client.pulls.update({
     ...context.repo,
