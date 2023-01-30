@@ -5,6 +5,14 @@ import Mustache from 'mustache';
 const run = async () => {
   const { context } = github;
   const githubToken = core.getInput('token');
+  let templateVars = { ...process.env }
+  const customVariables = core.getInput('variables');
+
+  if (customVariables.length) {
+    const customObject = JSON.parse(customVariables);
+    templateVars = { ...templateVars, ...customObject }
+  }
+
   const client = github.getOctokit(githubToken).rest;
 
   const { number: pull_number } = context.payload.pull_request;
@@ -14,7 +22,7 @@ const run = async () => {
     pull_number,
   });
 
-  const output = Mustache.render(pr.body || '', { ...process.env });
+  const output = Mustache.render(pr.body || '', templateVars);
 
   client.pulls.update({
     ...context.repo,

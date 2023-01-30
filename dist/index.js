@@ -8221,13 +8221,19 @@ var mustache_default = mustache;
 var run = async () => {
   const { context } = github;
   const githubToken = core.getInput("token");
+  let templateVars = { ...process.env };
+  const customVariables = core.getInput("variables");
+  if (customVariables.length) {
+    const customObject = JSON.parse(customVariables);
+    templateVars = { ...templateVars, ...customObject };
+  }
   const client = github.getOctokit(githubToken).rest;
   const { number: pull_number } = context.payload.pull_request;
   const { data: pr } = await client.pulls.get({
     ...context.repo,
     pull_number
   });
-  const output = mustache_default.render(pr.body || "", { ...process.env });
+  const output = mustache_default.render(pr.body || "", templateVars);
   client.pulls.update({
     ...context.repo,
     pull_number,
