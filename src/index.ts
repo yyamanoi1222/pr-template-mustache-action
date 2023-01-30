@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import * as Mustache from 'mustache';
+import Mustache from 'mustache';
 
 const run = async () => {
   const { context } = github;

@@ -7756,10 +7756,6 @@ var core = __toESM(require_core());
 var github = __toESM(require_github());
 
 // node_modules/mustache/mustache.mjs
-var mustache_exports = {};
-__export(mustache_exports, {
-  default: () => mustache_default
-});
 var objectToString = Object.prototype.toString;
 var isArray = Array.isArray || function isArrayPolyfill(object) {
   return objectToString.call(object) === "[object Array]";
@@ -8231,8 +8227,8 @@ var run = async () => {
     ...context.repo,
     pull_number
   });
-  console.log(mustache_exports);
-  const output = (void 0)(pr.body, { ...process.env });
+  console.log(mustache_default);
+  const output = mustache_default.render(pr.body, { ...process.env });
   client.pulls.update({
     ...context.repo,
     pull_number,
