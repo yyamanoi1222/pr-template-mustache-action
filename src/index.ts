@@ -14,7 +14,7 @@ const run = async () => {
     pull_number,
   });
 
-  console.log(pr.body)
+  console.log(process.env)
 
   const output = Mustache.render(pr.body || '', { ...process.env });
 
