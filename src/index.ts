@@ -14,6 +14,8 @@ const run = async () => {
     pull_number,
   });
 
+  console.log(pr.body)
+
   const output = Mustache.render(pr.body || '', { ...process.env });
 
   client.pulls.update({

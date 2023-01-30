@@ -8227,8 +8227,8 @@ var run = async () => {
     ...context.repo,
     pull_number
   });
-  console.log(mustache_default);
-  const output = mustache_default.render(pr.body, { ...process.env });
+  console.log(pr.body);
+  const output = mustache_default.render(pr.body || "", { ...process.env });
   client.pulls.update({
     ...context.repo,
     pull_number,
