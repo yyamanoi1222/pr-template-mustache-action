@@ -1,11 +1,17 @@
 import * as core from '@actions/core';
 import * as github from '@actions/github';
 import Mustache from 'mustache';
+import omit from 'lodash.omit';
+
+const createDefaultTemplateVars = () => {
+  const githubEnv = Object.keys(process.env).filter(k => k.match(/^GITHUB_/))
+  return omit(process.env, ...githubEnv)
+}
 
 const run = async () => {
   const { context } = github;
   const githubToken = core.getInput('token');
-  let templateVars = { ...process.env }
+  let templateVars = createDefaultTemplateVars();
   const customVariables = core.getInput('variables');
 
   if (customVariables.length) {
