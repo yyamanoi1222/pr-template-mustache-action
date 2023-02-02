@@ -8726,25 +8726,29 @@ var mustache_default = mustache;
 
 // src/index.ts
 var import_lodash = __toESM(require_lodash());
-var createDefaultTemplateVars = () => {
+var createDefaultTemplateVars = ({ pull_number, pr_title }) => {
   const githubEnv = Object.keys(process.env).filter((k) => k.match(/^GITHUB_/));
-  return (0, import_lodash.default)(process.env, ...githubEnv);
+  return {
+    ...(0, import_lodash.default)(process.env, ...githubEnv),
+    PR_NUMBER: pull_number,
+    PR_TITLE: pr_title
+  };
 };
 var run = async () => {
   const { context } = github;
   const githubToken = core.getInput("token");
-  let templateVars = createDefaultTemplateVars();
-  const customVariables = core.getInput("variables");
-  if (customVariables.length) {
-    const customObject = JSON.parse(customVariables);
-    templateVars = { ...templateVars, ...customObject };
-  }
   const client = github.getOctokit(githubToken).rest;
   const { number: pull_number } = context.payload.pull_request;
   const { data: pr } = await client.pulls.get({
     ...context.repo,
     pull_number
   });
+  const customVariables = core.getInput("variables");
+  let templateVars = createDefaultTemplateVars({ pull_number, pr_title: pr.title });
+  if (customVariables.length) {
+    const customObject = JSON.parse(customVariables);
+    templateVars = { ...templateVars, ...customObject };
+  }
   const output = mustache_default.render(pr.body || "", templateVars);
   client.pulls.update({
     ...context.repo,
