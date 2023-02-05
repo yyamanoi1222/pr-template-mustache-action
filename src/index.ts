@@ -16,7 +16,13 @@ const run = async () => {
   const { context } = github;
   const githubToken = core.getInput('token');
   const client = github.getOctokit(githubToken).rest;
-  const { number: pull_number } = context.payload.pull_request;
+
+  const { pull_request } = context.payload;
+  if (!pull_request) {
+    core.setFailed("This action is not a pull request");
+    return;
+  }
+  const { number: pull_number } = pull_request;
 
   const { data: pr } = await client.pulls.get({
     ...context.repo,
