@@ -32,3 +32,4 @@ jobs:
 ```
 
 ## preset variables
+Environment variables starting with GITHUB_ are provided as presets
