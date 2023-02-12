@@ -31,5 +31,18 @@ jobs:
         pull-requests: write
 ```
 
+
+example PR Template
+```
+Template example {{var}}
+```
+
+The above action will update the following text
+```
+Template example 1
+```
+
+
+
 ## preset variables
 Environment variables starting with GITHUB_ are provided as presets
