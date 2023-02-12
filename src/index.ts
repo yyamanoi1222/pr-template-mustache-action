@@ -12,6 +12,12 @@ const createDefaultTemplateVars = ({ pull_number, pr_title }: { pr_title: string
   }
 }
 
+const getEnvVar = (copyEnv: string[]) => {
+  return {
+    ...omit(process.env, ...copyEnv)
+  }
+}
+
 const run = async () => {
   const { context } = github;
   const githubToken = core.getInput('token');
@@ -29,11 +35,15 @@ const run = async () => {
     pull_number,
   });
 
-  const customVariables = core.getInput('variables');
   let templateVars = createDefaultTemplateVars({ pull_number, pr_title: pr.title });
+  const customVariables = core.getInput('variables');
   if (customVariables.length) {
     const customObject = JSON.parse(customVariables);
     templateVars = { ...templateVars, ...customObject }
+  }
+  const copyEnv = core.getMultilineInput('copy-env');
+  if (copyEnv.length) {
+    templateVars = { ...templateVars, ...(getEnvVar(copyEnv)) }
   }
 
   const output = Mustache.render(pr.body || '', templateVars);

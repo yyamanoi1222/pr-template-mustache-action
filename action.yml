@@ -5,6 +5,9 @@ inputs:
   variables:
     description: "custom variables"
     required: false
+  copy-env:
+    description: "List of environment variables to pass to template variables"
+    required: false
   token:
     description: "GITHUB_TOKEN"
     required: true

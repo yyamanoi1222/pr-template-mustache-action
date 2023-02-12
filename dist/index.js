@@ -2076,14 +2076,14 @@ var require_core = __commonJS({
       return val.trim();
     }
     exports.getInput = getInput2;
-    function getMultilineInput(name, options) {
+    function getMultilineInput2(name, options) {
       const inputs = getInput2(name, options).split("\n").filter((x) => x !== "");
       if (options && options.trimWhitespace === false) {
         return inputs;
       }
       return inputs.map((input) => input.trim());
     }
-    exports.getMultilineInput = getMultilineInput;
+    exports.getMultilineInput = getMultilineInput2;
     function getBooleanInput(name, options) {
       const trueValue = ["true", "True", "TRUE"];
       const falseValue = ["false", "False", "FALSE"];
@@ -2109,11 +2109,11 @@ Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
       command_1.issue("echo", enabled ? "on" : "off");
     }
     exports.setCommandEcho = setCommandEcho;
-    function setFailed(message) {
+    function setFailed2(message) {
       process.exitCode = ExitCode.Failure;
       error(message);
     }
-    exports.setFailed = setFailed;
+    exports.setFailed = setFailed2;
     function isDebug() {
       return process.env["RUNNER_DEBUG"] === "1";
     }
@@ -8734,20 +8734,34 @@ var createDefaultTemplateVars = ({ pull_number, pr_title }) => {
     PR_TITLE: pr_title
   };
 };
+var getEnvVar = (copyEnv) => {
+  return {
+    ...(0, import_lodash.default)(process.env, ...copyEnv)
+  };
+};
 var run = async () => {
   const { context } = github;
   const githubToken = core.getInput("token");
   const client = github.getOctokit(githubToken).rest;
-  const { number: pull_number } = context.payload.pull_request;
+  const { pull_request } = context.payload;
+  if (!pull_request) {
+    core.setFailed("This action is not a pull request");
+    return;
+  }
+  const { number: pull_number } = pull_request;
   const { data: pr } = await client.pulls.get({
     ...context.repo,
     pull_number
   });
-  const customVariables = core.getInput("variables");
   let templateVars = createDefaultTemplateVars({ pull_number, pr_title: pr.title });
+  const customVariables = core.getInput("variables");
   if (customVariables.length) {
     const customObject = JSON.parse(customVariables);
     templateVars = { ...templateVars, ...customObject };
+  }
+  const copyEnv = core.getMultilineInput("copy-env");
+  if (copyEnv.length) {
+    templateVars = { ...templateVars, ...getEnvVar(copyEnv) };
   }
   const output = mustache_default.render(pr.body || "", templateVars);
   client.pulls.update({
