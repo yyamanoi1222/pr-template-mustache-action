@@ -21,12 +21,16 @@ jobs:
     steps:
       - name: update
         uses: yyamanoi1222/pr-template-mustache-action@main
+        env:
+          APP_ENV: test
         with:
           token: ${{ github.token }}
           variables: |
             {
               "var": 1
             }
+          copy-env: |
+            APP_ENV
     permissions:
         pull-requests: write
 ```
@@ -35,11 +39,13 @@ jobs:
 example PR Template
 ```
 Template example {{var}}
+app env is {{APP_ENV}}
 ```
 
 The above action will update the following text
 ```
 Template example 1
+app env is test
 ```
 
 
